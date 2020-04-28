@@ -1,11 +1,12 @@
 ports:
-- port: 8001
+- port: 8002
   onOpen: open-preview
 tasks:
-- name: Apache
+- name: Nginx
   command: >
-    while [ ! -f /tmp/terminado ] ; do sleep 1; done ; apachectl start &&
-    multitail /var/log/apache2/access.log -I /var/log/apache2/error.log
+    sed -ri 's|root [^;]+;|root '"$GITPOD_REPO_ROOT"'/public;|g' /etc/nginx/nginx.conf &&
+    while [ ! -f /tmp/terminado ] ; do sleep 1; done ; service nginx start &&
+    multitail /var/log/nginx/access.log -I /var/log/nginx/error.log
 - name: Terminal
   init: >
     composer install;
@@ -14,7 +15,7 @@ tasks:
     clear;
     echo "";
     echo "Cosas que puedes hacer en este terminal:";
-    echo " * apachectl stop";
-    echo " * apachectl start";
-    echo " * gp open /var/log/apache2/access.log";
-    echo " * gp open /var/log/apache2/error.log";
+    echo " * service nginx stop";
+    echo " * service nginx start";
+    echo " * gp open /var/log/nginx/access.log";
+    echo " * gp open /var/log/nginx/error.log";
